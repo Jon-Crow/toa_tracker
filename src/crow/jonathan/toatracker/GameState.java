@@ -11,6 +11,7 @@ public class GameState
     
     private Weather weather;
     private Travel travel;
+    private Calendar cal;
     private ArrayList<Player> plyrs;
     
     public GameState()
@@ -18,6 +19,7 @@ public class GameState
         plyrs = new ArrayList<>();
         weather = Weather.roll();
         travel = new Travel();
+        cal = new Calendar();
     }
     public Weather getWeather()
     {
@@ -30,6 +32,10 @@ public class GameState
     public Travel getTravel()
     {
         return travel;
+    }
+    public Calendar getCalendar()
+    {
+        return cal;
     }
     public int getPlayerCount()
     {

@@ -1,5 +1,6 @@
 package crow.jonathan.toatracker;
 
+import crow.jonathan.toatracker.Calendar.Date;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -30,6 +31,7 @@ public class CrawlPanel extends JPanel
         initComponents();
         setWeatherLabels();
         setTravelBoxes();
+        setCalendarLabels();
         DefaultCellEditor sizeEdit = new DefaultCellEditor(new JComboBox(CreatureSize.values()));
         plyrTable.getColumnModel().getColumn(PlayerTableModel.COL_SIZE).setCellEditor(sizeEdit);
         plyrTable.setDefaultRenderer(Float.class, playerCellRenderer);
@@ -37,6 +39,12 @@ public class CrawlPanel extends JPanel
     public GameState getGameState()
     {
         return gameState;
+    }
+    private void setCalendarLabels()
+    {
+        CalendarPanel cal = (CalendarPanel)calPanel;
+        yearLbl.setText(cal.getYear() + "DR");
+        monthLbl.setText(cal.getMonth().stringVal);
     }
     private void setWeatherLabels()
     {
@@ -141,6 +149,41 @@ public class CrawlPanel extends JPanel
     private void lostCheckActionPerformed(ActionEvent event)
     {
         gameState.getTravel().setLost(lostCheck.isSelected());
+    }
+    private void nextDayBtnActionPerformed(ActionEvent event)
+    {
+        Date date = gameState.getCalendar().getDate();
+        date.set(date.getNextDay());
+        setCalendarLabels();
+        updateUI();
+    }
+    private void prevYearBtnActionPerformed(ActionEvent event)
+    {
+        CalendarPanel cal = (CalendarPanel)calPanel;
+        cal.setYear(cal.getYear()-1);
+        setCalendarLabels();
+        updateUI();
+    }
+    private void nextYearBtnActionPerformed(ActionEvent event)
+    {
+        CalendarPanel cal = (CalendarPanel)calPanel;
+        cal.setYear(cal.getYear()+1);
+        setCalendarLabels();
+        updateUI();
+    }
+    private void prevMonthBtnActionPerformed(ActionEvent event)
+    {
+        CalendarPanel cal = (CalendarPanel)calPanel;
+        cal.setMonth(Calendar.Month.getPrevious(cal.getMonth()));
+        setCalendarLabels();
+        updateUI();
+    }
+    private void nextMonthBtnActionPerformed(ActionEvent event)
+    {
+        CalendarPanel cal = (CalendarPanel)calPanel;
+        cal.setMonth(Calendar.Month.getNext(cal.getMonth()));
+        setCalendarLabels();
+        updateUI();
     }
     private void travelBtnActionPerformed(ActionEvent event)
     {
@@ -437,8 +480,19 @@ public class CrawlPanel extends JPanel
         travelLbl = new javax.swing.JLabel();
         wisRollLbl = new javax.swing.JLabel();
         paceLbl = new javax.swing.JLabel();
+        calPanel = new CalendarPanel(gameState.getCalendar());
+        jSeparator3 = new javax.swing.JSeparator();
+        jLabel11 = new javax.swing.JLabel();
+        prevYearBtn = new javax.swing.JButton();
+        yearLbl = new javax.swing.JLabel();
+        nextYearBtn = new javax.swing.JButton();
+        prevMonthBtn = new javax.swing.JButton();
+        monthLbl = new javax.swing.JLabel();
+        nextMonthBtn = new javax.swing.JButton();
+        nextDayBtn = new javax.swing.JButton();
+        setDateBtn = new javax.swing.JButton();
 
-        setPreferredSize(new java.awt.Dimension(750, 500));
+        setPreferredSize(new java.awt.Dimension(900, 500));
 
         jLabel1.setFont(new java.awt.Font("Comic Sans MS", 1, 18)); // NOI18N
         jLabel1.setText("Weather");
@@ -660,6 +714,81 @@ public class CrawlPanel extends JPanel
         paceLbl.setFont(new java.awt.Font("Comic Sans MS", 0, 12)); // NOI18N
         paceLbl.setText(" ");
 
+        javax.swing.GroupLayout calPanelLayout = new javax.swing.GroupLayout(calPanel);
+        calPanel.setLayout(calPanelLayout);
+        calPanelLayout.setHorizontalGroup(
+            calPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        calPanelLayout.setVerticalGroup(
+            calPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+
+        jLabel11.setFont(new java.awt.Font("Comic Sans MS", 1, 18)); // NOI18N
+        jLabel11.setText("Calendar");
+
+        prevYearBtn.setFont(new java.awt.Font("Comic Sans MS", 0, 12)); // NOI18N
+        prevYearBtn.setText("<");
+        prevYearBtn.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                prevYearBtnActionPerformed(evt);
+            }
+        });
+
+        yearLbl.setFont(new java.awt.Font("Comic Sans MS", 0, 12)); // NOI18N
+        yearLbl.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        yearLbl.setText("year");
+
+        nextYearBtn.setFont(new java.awt.Font("Comic Sans MS", 0, 12)); // NOI18N
+        nextYearBtn.setText(">");
+        nextYearBtn.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                nextYearBtnActionPerformed(evt);
+            }
+        });
+
+        prevMonthBtn.setFont(new java.awt.Font("Comic Sans MS", 0, 12)); // NOI18N
+        prevMonthBtn.setText("<");
+        prevMonthBtn.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                prevMonthBtnActionPerformed(evt);
+            }
+        });
+
+        monthLbl.setFont(new java.awt.Font("Comic Sans MS", 0, 12)); // NOI18N
+        monthLbl.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        monthLbl.setText("month");
+
+        nextMonthBtn.setFont(new java.awt.Font("Comic Sans MS", 0, 12)); // NOI18N
+        nextMonthBtn.setText(">");
+        nextMonthBtn.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                nextMonthBtnActionPerformed(evt);
+            }
+        });
+
+        nextDayBtn.setFont(new java.awt.Font("Comic Sans MS", 0, 12)); // NOI18N
+        nextDayBtn.setText("Next Day");
+        nextDayBtn.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                nextDayBtnActionPerformed(evt);
+            }
+        });
+
+        setDateBtn.setFont(new java.awt.Font("Comic Sans MS", 0, 12)); // NOI18N
+        setDateBtn.setText("Set Date");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -714,25 +843,47 @@ public class CrawlPanel extends JPanel
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(travelLbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jSeparator3)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel8)
+                            .addComponent(wisRollLbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(paceLbl, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(travelLbl, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(calPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel9)
+                                .addComponent(prevYearBtn)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(terrainBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(yearLbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(nextYearBtn))
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel10)
+                                .addComponent(prevMonthBtn)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(paceBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(canoeCheck)
-                            .addComponent(lostCheck)
-                            .addComponent(travelBtn))
-                        .addGap(0, 158, Short.MAX_VALUE))
-                    .addComponent(wisRollLbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(paceLbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                                .addComponent(monthLbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(nextMonthBtn))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel8)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel9)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(terrainBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel10)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(paceBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(canoeCheck)
+                                    .addComponent(lostCheck)
+                                    .addComponent(travelBtn)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel11)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(nextDayBtn)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(setDateBtn)))
+                                .addGap(0, 178, Short.MAX_VALUE)))
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -761,7 +912,25 @@ public class CrawlPanel extends JPanel
                         .addComponent(paceLbl)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(travelLbl)
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel11)
+                            .addComponent(nextDayBtn)
+                            .addComponent(setDateBtn))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(prevYearBtn)
+                            .addComponent(yearLbl)
+                            .addComponent(nextYearBtn))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(prevMonthBtn)
+                            .addComponent(monthLbl)
+                            .addComponent(nextMonthBtn))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(calPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jLabel1)
@@ -889,6 +1058,31 @@ public class CrawlPanel extends JPanel
     {//GEN-HEADEREND:event_travelBtnActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_travelBtnActionPerformed
+
+    private void nextDayBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_nextDayBtnActionPerformed
+    {//GEN-HEADEREND:event_nextDayBtnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_nextDayBtnActionPerformed
+
+    private void prevYearBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_prevYearBtnActionPerformed
+    {//GEN-HEADEREND:event_prevYearBtnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_prevYearBtnActionPerformed
+
+    private void nextYearBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_nextYearBtnActionPerformed
+    {//GEN-HEADEREND:event_nextYearBtnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_nextYearBtnActionPerformed
+
+    private void prevMonthBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_prevMonthBtnActionPerformed
+    {//GEN-HEADEREND:event_prevMonthBtnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_prevMonthBtnActionPerformed
+
+    private void nextMonthBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_nextMonthBtnActionPerformed
+    {//GEN-HEADEREND:event_nextMonthBtnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_nextMonthBtnActionPerformed
 */
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -896,6 +1090,7 @@ public class CrawlPanel extends JPanel
     private javax.swing.JButton allDrinkBtn;
     private javax.swing.JButton allEatBtn;
     private javax.swing.JButton allEatDrinkBtn;
+    private javax.swing.JPanel calPanel;
     private javax.swing.JCheckBox canoeCheck;
     private javax.swing.JButton collectBtn;
     private javax.swing.JCheckBox collectCheck;
@@ -904,6 +1099,7 @@ public class CrawlPanel extends JPanel
     private javax.swing.JButton eatDrinkbtn;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -915,12 +1111,20 @@ public class CrawlPanel extends JPanel
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JSeparator jSeparator3;
     private javax.swing.JCheckBox lostCheck;
+    private javax.swing.JLabel monthLbl;
+    private javax.swing.JButton nextDayBtn;
+    private javax.swing.JButton nextMonthBtn;
+    private javax.swing.JButton nextYearBtn;
     private javax.swing.JComboBox<String> paceBox;
     private javax.swing.JLabel paceLbl;
     private javax.swing.JTable plyrTable;
+    private javax.swing.JButton prevMonthBtn;
+    private javax.swing.JButton prevYearBtn;
     private javax.swing.JLabel rainLbl;
     private javax.swing.JButton removePlyrBtn;
+    private javax.swing.JButton setDateBtn;
     private javax.swing.JLabel tempLbl;
     private javax.swing.JComboBox<String> terrainBox;
     private javax.swing.JButton travelBtn;
@@ -928,5 +1132,6 @@ public class CrawlPanel extends JPanel
     private javax.swing.JButton weatherRollBtn;
     private javax.swing.JLabel windLbl;
     private javax.swing.JLabel wisRollLbl;
+    private javax.swing.JLabel yearLbl;
     // End of variables declaration//GEN-END:variables
 }

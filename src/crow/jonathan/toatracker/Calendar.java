@@ -20,6 +20,10 @@ public class Calendar
         events = new ArrayList<>();
         this.date = date;
     }
+    public Date getDate()
+    {
+        return date;
+    }
     public int getEventCount()
     {
         return events.size();
@@ -171,7 +175,7 @@ public class Calendar
         }
         public Date getNextDay()
         {
-            Date next = new Date(day+1, year);
+            Date next = new Date(year, day+1);
             if(next.day == 0)
                 next.year++;
             return next;
@@ -184,6 +188,11 @@ public class Calendar
         {
             return getAbsoluteDay() > date.getAbsoluteDay();
         }
+        public void set(Date date)
+        {
+            this.day = date.day;
+            this.year = date.year;
+        }
         @Override
         public boolean equals(Object obj)
         {
@@ -194,7 +203,7 @@ public class Calendar
         @Override
         public String toString()
         {
-            return String.format("%d of %s, %dDR", getDayOfMonth(), getMonth().stringVal, getYear());
+            return String.format("%d of %s, %dDR", getDayOfMonth()+1, getMonth().stringVal, getYear());
         }
     }
     public static enum Month
@@ -217,6 +226,69 @@ public class Calendar
         private Month(String stringVal)
         {
             this.stringVal = stringVal;
+        }
+        public static Month getNext(Month month)
+        {
+            switch(month)
+            {
+                case HAMMER:
+                    return ALTURIAK;
+                case ALTURIAK:
+                    return CHES;
+                case CHES:
+                    return TARSAKH;
+                case TARSAKH:
+                    return MIRTUL;
+                case MIRTUL:
+                    return KYTHORN;
+                case KYTHORN:
+                    return FLAMERULE;
+                case FLAMERULE:
+                    return ELEASIS;
+                case ELEASIS:
+                    return ELEINT;
+                case ELEINT:
+                    return MARPENOTH;
+                case MARPENOTH:
+                    return UKTAR;
+                case UKTAR:
+                    return NIGHTAL;
+                case NIGHTAL:
+                default:
+                    return HAMMER;
+            }
+        }
+        public static Month getPrevious(Month month)
+        {
+            switch(month)
+            {
+                case HAMMER:
+                    return NIGHTAL;
+                case ALTURIAK:
+                    return HAMMER;
+                case CHES:
+                    return ALTURIAK;
+                case TARSAKH:
+                    return CHES;
+                case MIRTUL:
+                    return TARSAKH;
+                case KYTHORN:
+                    return MIRTUL;
+                case FLAMERULE:
+                    return KYTHORN;
+                case ELEASIS:
+                    return FLAMERULE;
+                case ELEINT:
+                    return ELEASIS;
+                case MARPENOTH:
+                    return ELEINT;
+                case UKTAR:
+                    return MARPENOTH;
+                case NIGHTAL:
+                    return UKTAR;
+                default:
+                    return HAMMER;
+            }
         }
     }
 }
