@@ -484,7 +484,6 @@
     <Component class="javax.swing.JButton" name="collectBtn">
       <Properties>
         <Property name="text" type="java.lang.String" value="Collect Water"/>
-        <Property name="enabled" type="boolean" value="false"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="collectBtnActionPerformed"/>

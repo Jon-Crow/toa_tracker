@@ -29,6 +29,7 @@ public class CrawlPanel extends JPanel
         this.gameState = gameState;
         playerTableModel = new PlayerTableModel();
         initComponents();
+        collectBtn.setVisible(!collectCheck.isSelected());
         setWeatherLabels();
         setTravelBoxes();
         setCalendarLabels();
@@ -81,7 +82,7 @@ public class CrawlPanel extends JPanel
     }
     private void collectCheckActionPerformed(ActionEvent event)
     {
-        collectBtn.setEnabled(!collectCheck.isSelected());
+        collectBtn.setVisible(!collectCheck.isSelected());
     }
     private void collectBtnActionPerformed(ActionEvent event)
     {
@@ -635,7 +636,6 @@ public class CrawlPanel extends JPanel
         });
 
         collectBtn.setText("Collect Water");
-        collectBtn.setEnabled(false);
         collectBtn.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)

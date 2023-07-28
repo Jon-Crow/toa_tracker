@@ -6,6 +6,9 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import javax.swing.JPanel;
 
@@ -17,14 +20,20 @@ public class CalendarPanel extends JPanel
     private Calendar cal;
     private Calendar.Month month;
     private int year;
+    private DayArea days[];
     
     public CalendarPanel(Calendar cal)
     {
         this.cal = cal;
         Date date = cal.getDate();
-        System.out.println("date: " + date);
         month = date.getMonth();
         year = date.getYear();
+        days = new DayArea[ROWS*COLS];
+        for(int i = 0; i < days.length; i++)
+            days[i] = new DayArea(new Rectangle(), "");
+        
+        setFocusable(true);
+        addMouseMotionListener(mouse);
     }
     public Calendar getCalendar()
     {
@@ -75,13 +84,20 @@ public class CalendarPanel extends JPanel
         {
             for(int x = 0; x < COLS; x++)
             {
+                int dayIdx = y*COLS+x;
+                days[dayIdx].rect.setBounds(x*dayW, y*dayH, dayW, dayH);
+                
                 Date date = new Date(getYear(), getMonth(), y*COLS+x);
                 g2d.drawString(date.getDayOfMonth()+1+"", x*dayW+1, (y+1)*dayH-1);
                 
                 ArrayList<Event> events = cal.getEvents(date);
                 String eventStr = "";
-                for(int i = 0; i < events.size(); i++)
+                days[dayIdx].tooltip = "";
+                for(Event event : events)
+                {
+                    days[dayIdx].tooltip += event.getName() + "<br>";
                     eventStr += "|";
+                }
                 
                 g2d.drawString(eventStr, x*dayW+1, y*dayH-1 + g2d.getFontMetrics().getHeight());
             }
@@ -97,4 +113,32 @@ public class CalendarPanel extends JPanel
             g2d.drawOval(dayX*dayW, dayY*dayH, dayW, dayH);
         }
     }
+    
+    private static final class DayArea
+    {
+        private Rectangle rect;
+        private String tooltip;
+        
+        private DayArea(Rectangle rect, String tooptip)
+        {
+            this.rect = rect;
+            this.tooltip = tooltip;
+        }
+    }
+    
+    private final MouseAdapter mouse = new MouseAdapter()
+    {
+        @Override
+        public void mouseMoved(MouseEvent event)
+        {
+            for(DayArea day : days)
+            {
+                if(day.rect.contains(event.getX(), event.getY()))
+                {
+                    setToolTipText("<html>" + day.tooltip + "</html>");
+                    return;
+                }
+            }
+        }
+    };
 }
