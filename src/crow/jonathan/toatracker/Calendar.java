@@ -140,6 +140,11 @@ public class Calendar
             setDayOfYear(day);
             this.year = year;
         }
+        public Date(int year, Month month, int day)
+        {
+            this.year = year;
+            setMonthAndDay(month.monthOfYear, day);
+        }
         public int getYear()
         {
             return year;
@@ -208,24 +213,26 @@ public class Calendar
     }
     public static enum Month
     {
-        HAMMER("Hammer"),
-        ALTURIAK("Alturiak"),
-        CHES("Ches"),
-        TARSAKH("Tarsakh"),
-        MIRTUL("Mirtul"),
-        KYTHORN("Kythorn"),
-        FLAMERULE("Flamerule"),
-        ELEASIS("Eleasis"),
-        ELEINT("Eleint"),
-        MARPENOTH("Marpenoth"),
-        UKTAR("Uktar"),
-        NIGHTAL("Nightal");
+        HAMMER("Hammer",0),
+        ALTURIAK("Alturiak",1),
+        CHES("Ches",2),
+        TARSAKH("Tarsakh",3),
+        MIRTUL("Mirtul",4),
+        KYTHORN("Kythorn",5),
+        FLAMERULE("Flamerule",6),
+        ELEASIS("Eleasis",7),
+        ELEINT("Eleint",8),
+        MARPENOTH("Marpenoth",9),
+        UKTAR("Uktar",10),
+        NIGHTAL("Nightal",11);
         
         public final String stringVal;
+        public final int monthOfYear;
         
-        private Month(String stringVal)
+        private Month(String stringVal, int monthOfYear)
         {
             this.stringVal = stringVal;
+            this.monthOfYear = monthOfYear;
         }
         public static Month getNext(Month month)
         {

@@ -2,6 +2,8 @@ package crow.jonathan.toatracker;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import crow.jonathan.toatracker.Calendar.Date;
+import crow.jonathan.toatracker.Calendar.Month;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -36,6 +38,13 @@ public class ToATracker
             state.addPlayer(plyr);
         }
         */
+        Calendar cal = state.getCalendar();
+        for(int i = 0; i < 10; i++)
+        {
+            cal.addEvent("", "", new Date(1500, Month.KYTHORN, 0), new Date(1500, Month.KYTHORN, i));
+            cal.addEvent("", "", new Date(1500, Month.KYTHORN, 10), new Date(1500, Month.KYTHORN, i+10));
+            cal.addEvent("", "", new Date(1500, Month.KYTHORN, 20), new Date(1500, Month.KYTHORN, i+20));
+        }
         
         JFrame frame = new JFrame("ToA Tracker");
         frame.setContentPane(new JScrollPane(new CrawlPanel(state)));

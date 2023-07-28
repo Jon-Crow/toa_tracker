@@ -1,10 +1,12 @@
 package crow.jonathan.toatracker;
 
 import crow.jonathan.toatracker.Calendar.Date;
+import crow.jonathan.toatracker.Calendar.Event;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.util.ArrayList;
 import javax.swing.JPanel;
 
 public class CalendarPanel extends JPanel
@@ -73,7 +75,15 @@ public class CalendarPanel extends JPanel
         {
             for(int x = 0; x < COLS; x++)
             {
-                g2d.drawString(y*COLS+x+1+"", x*dayW+1, (y+1)*dayH-1);
+                Date date = new Date(getYear(), getMonth(), y*COLS+x);
+                g2d.drawString(date.getDayOfMonth()+1+"", x*dayW+1, (y+1)*dayH-1);
+                
+                ArrayList<Event> events = cal.getEvents(date);
+                String eventStr = "";
+                for(int i = 0; i < events.size(); i++)
+                    eventStr += "|";
+                
+                g2d.drawString(eventStr, x*dayW+1, y*dayH-1 + g2d.getFontMetrics().getHeight());
             }
         }
         
