@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
 
 public class ToATracker
 {
@@ -36,12 +37,12 @@ public class ToATracker
         }
         */
         
-        JFrame test = new JFrame("ToA Tracker");
-        test.setContentPane(new CrawlPanel(state));
-        test.pack();
-        test.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        test.addWindowListener(STATE_SAVER);
-        test.setVisible(true);
+        JFrame frame = new JFrame("ToA Tracker");
+        frame.setContentPane(new JScrollPane(new CrawlPanel(state)));
+        frame.pack();
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.addWindowListener(STATE_SAVER);
+        frame.setVisible(true);
     }
     private static GameState loadGameState(String path)
     {

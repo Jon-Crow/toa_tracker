@@ -1,0 +1,222 @@
+package crow.jonathan.toatracker;
+
+import java.util.ArrayList;
+
+public class Calendar
+{
+    public static final int MONTHS_PER_YEAR = 12;
+    public static final int DAYS_PER_MONTH = 30;
+    public static final int DAYS_PER_YEAR = MONTHS_PER_YEAR*DAYS_PER_MONTH;
+
+    private Date date;
+    private ArrayList<Event> events;
+    
+    public Calendar()
+    {
+        this(new Date());
+    }
+    public Calendar(Date date)
+    {
+        events = new ArrayList<>();
+        this.date = date;
+    }
+    public int getEventCount()
+    {
+        return events.size();
+    }
+    public Event getEvent(int idx)
+    {
+        return events.get(idx);
+    }
+    public Event addEvent(String name, String desc, Date start, Date end)
+    {
+        Event event = new Event(name, desc, start, end);
+        events.add(event);
+        return event;
+    }
+    public void removeEvent(Event event)
+    {
+        events.remove(event);
+    }
+    public void removeEvent(int idx)
+    {
+        events.remove(idx);
+    }
+    public ArrayList<Event> getEvents(Date date)
+    {
+        ArrayList<Event> eventList = new ArrayList<>();
+        for(Event event : events)
+        {
+            if(event.includes(date))
+                eventList.add(event);
+        }
+        return eventList;
+    }
+    public ArrayList<Event> getEvents(Date start, Date end)
+    {
+        if(start.equals(end))
+            return getEvents(start);
+        
+        ArrayList<Event> eventList = new ArrayList<>();
+        if(start.isAfter(end))
+            return eventList;
+        
+        Date date = start;
+        while(true)
+        {
+            eventList.addAll(getEvents(date));
+            
+            if(date.equals(end))
+                return eventList;
+            
+            date = date.getNextDay();
+        }
+    }
+    
+    public static final class Event
+    {
+        private String name,
+                       desc;
+        private Date start,
+                     end;
+        
+        private Event(String name, String desc, Date start, Date end)
+        {
+            this.name = name;
+            this.desc = desc;
+            this.start = start;
+            this.end = end;
+        }
+        public String getName()
+        {
+            return name;
+        }
+        public void setName(String name)
+        {
+            this.name = name;
+        }
+        public String getDescription()
+        {
+            return desc;
+        }
+        public void setDescription(String desc)
+        {
+            this.desc = desc;
+        }
+        public Date getStartDate()
+        {
+            return start;
+        }
+        public Date getEndDate()
+        {
+            return end;
+        }
+        public boolean isSingleDay()
+        {
+            return start.equals(end);
+        }
+        public boolean includes(Date date)
+        {
+            return start.equals(date) ||
+                   end.equals(date) ||
+                   (start.isBefore(date) && end.isAfter(date));
+        }
+    }
+    public static final class Date
+    {
+        private int day,
+                    year;
+    
+        public Date()
+        {
+            this(0, 0);
+        }
+        public Date(int year, int day)
+        {
+            setDayOfYear(day);
+            this.year = year;
+        }
+        public int getYear()
+        {
+            return year;
+        }
+        public void setYear(int year)
+        {
+            this.year = year;
+        }
+        public final void setDayOfYear(int day)
+        {
+            this.day = Math.abs(day)%DAYS_PER_YEAR;
+        }
+        public int getDayOfYear()
+        {
+            return day;
+        }
+        public int getDayOfMonth()
+        {
+            return day%DAYS_PER_MONTH;
+        }
+        public int getAbsoluteDay()
+        {
+            return year*DAYS_PER_YEAR+day;
+        }
+        public Month getMonth()
+        {
+            int monthIdx = getDayOfYear()/DAYS_PER_MONTH;
+            return Month.values()[monthIdx];
+        }
+        public void setMonthAndDay(int month, int day)
+        {
+            setDayOfYear(month*DAYS_PER_MONTH + day);
+        }
+        public Date getNextDay()
+        {
+            Date next = new Date(day+1, year);
+            if(next.day == 0)
+                next.year++;
+            return next;
+        }
+        public boolean isBefore(Date date)
+        {
+            return getAbsoluteDay() < date.getAbsoluteDay();
+        }
+        public boolean isAfter(Date date)
+        {
+            return getAbsoluteDay() > date.getAbsoluteDay();
+        }
+        @Override
+        public boolean equals(Object obj)
+        {
+            if(obj instanceof Date)
+                return getAbsoluteDay() == ((Date)obj).getAbsoluteDay();
+            return false;
+        }
+        @Override
+        public String toString()
+        {
+            return String.format("%d of %s, %dDR", getDayOfMonth(), getMonth().stringVal, getYear());
+        }
+    }
+    public static enum Month
+    {
+        HAMMER("Hammer"),
+        ALTURIAK("Alturiak"),
+        CHES("Ches"),
+        TARSAKH("Tarsakh"),
+        MIRTUL("Mirtul"),
+        KYTHORN("Kythorn"),
+        FLAMERULE("Flamerule"),
+        ELEASIS("Eleasis"),
+        ELEINT("Eleint"),
+        MARPENOTH("Marpenoth"),
+        UKTAR("Uktar"),
+        NIGHTAL("Nightal");
+        
+        public final String stringVal;
+        
+        private Month(String stringVal)
+        {
+            this.stringVal = stringVal;
+        }
+    }
+}
