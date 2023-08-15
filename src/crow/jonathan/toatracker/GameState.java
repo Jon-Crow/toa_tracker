@@ -92,6 +92,20 @@ public class GameState
             return 0;
         return nav.getWisdomModifier();
     }
+    public float getPartyWater()
+    {
+        float water = 0.0f;
+        for(Player plyr : plyrs)
+            water += plyr.getWater();
+        return water;
+    }
+    public float getPartyFood()
+    {
+        float food = 0.0f;
+        for(Player plyr : plyrs)
+            food += plyr.getFood();
+        return food;
+    }
     public void triggerPlayerEvent(PlayerEvent event, int[] plyrs)
     {
         for(int plyrIdx : plyrs)

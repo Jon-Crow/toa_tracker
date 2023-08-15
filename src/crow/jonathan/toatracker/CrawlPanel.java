@@ -33,13 +33,26 @@ public class CrawlPanel extends JPanel
         setWeatherLabels();
         setTravelBoxes();
         setCalendarLabels();
+        setPartyTotalBoxes();
         DefaultCellEditor sizeEdit = new DefaultCellEditor(new JComboBox(CreatureSize.values()));
         plyrTable.getColumnModel().getColumn(PlayerTableModel.COL_SIZE).setCellEditor(sizeEdit);
         plyrTable.setDefaultRenderer(Float.class, playerCellRenderer);
     }
+    @Override
+    public void updateUI()
+    {
+        if(gameState != null)
+            setPartyTotalBoxes();
+        super.updateUI();
+    }
     public GameState getGameState()
     {
         return gameState;
+    }
+    private void setPartyTotalBoxes()
+    {
+        partyFoodBox.setText(gameState.getPartyFood() + "");
+        partyWaterBox.setText(gameState.getPartyWater() + "");
     }
     private void setCalendarLabels()
     {
@@ -133,6 +146,7 @@ public class CrawlPanel extends JPanel
     }
     private void plyrTablePropertyChange(PropertyChangeEvent event)
     {
+        setPartyTotalBoxes();
         updateUI();
     }
     private void terrainBoxActionPerformed(ActionEvent event)
@@ -184,6 +198,20 @@ public class CrawlPanel extends JPanel
         CalendarPanel cal = (CalendarPanel)calPanel;
         cal.setMonth(Calendar.Month.getNext(cal.getMonth()));
         setCalendarLabels();
+        updateUI();
+    }
+    private void distWaterBtnActionPerformed(ActionEvent event)
+    {
+        float water = gameState.getPartyWater()/gameState.getPlayerCount();
+        for(int i = 0; i < gameState.getPlayerCount(); i++)
+            gameState.getPlayer(i).setWater(water);
+        updateUI();
+    }
+    private void distFoodBtnActionPerformed(ActionEvent event)
+    {
+        float food = gameState.getPartyFood()/gameState.getPlayerCount();
+        for(int i = 0; i < gameState.getPlayerCount(); i++)
+            gameState.getPlayer(i).setFood(food);
         updateUI();
     }
     private void travelBtnActionPerformed(ActionEvent event)
@@ -250,14 +278,17 @@ public class CrawlPanel extends JPanel
     
     private final DefaultTableCellRenderer playerCellRenderer = new DefaultTableCellRenderer()
     {
-        private static final Color DEFAULT_CELL_COLOR = Color.WHITE;
-        private static final Color BAD_CELL_COLOR = Color.RED.brighter();
+        private Color defCellClr = null;
+        private final Color BAD_CELL_COLOR = new Color(1.0f, 0.0f, 0.0f, 0.5f);
         
         @Override
         public Component getTableCellRendererComponent(JTable table, Object val, boolean selected, boolean focus, int row, int col)
         {
             Component comp = super.getTableCellRendererComponent(table, val, selected, focus, row, col);
             Player plyr = gameState.getPlayer(row);
+            
+            if(defCellClr == null)
+                defCellClr = comp.getBackground();
             
             if(plyr == null)
                 return comp;
@@ -268,13 +299,13 @@ public class CrawlPanel extends JPanel
             {
                 case PlayerTableModel.COL_FOOD:
                     if(plyr.hasEnoughFood(extreme))
-                        comp.setBackground(DEFAULT_CELL_COLOR);
+                        comp.setBackground(defCellClr);
                     else
                         comp.setBackground(BAD_CELL_COLOR);
                     break;
                 case PlayerTableModel.COL_WATER:
                     if(plyr.hasEnoughWater(extreme))
-                        comp.setBackground(DEFAULT_CELL_COLOR);
+                        comp.setBackground(defCellClr);
                     else
                         comp.setBackground(BAD_CELL_COLOR);
             }
@@ -492,6 +523,12 @@ public class CrawlPanel extends JPanel
         nextMonthBtn = new javax.swing.JButton();
         nextDayBtn = new javax.swing.JButton();
         setDateBtn = new javax.swing.JButton();
+        jLabel12 = new javax.swing.JLabel();
+        partyFoodBox = new javax.swing.JTextField();
+        jLabel13 = new javax.swing.JLabel();
+        partyWaterBox = new javax.swing.JTextField();
+        distFoodBtn = new javax.swing.JToggleButton();
+        distWaterBtn = new javax.swing.JToggleButton();
 
         setPreferredSize(new java.awt.Dimension(900, 500));
 
@@ -722,7 +759,7 @@ public class CrawlPanel extends JPanel
         );
         calPanelLayout.setVerticalGroup(
             calPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 148, Short.MAX_VALUE)
         );
 
         jLabel11.setFont(new java.awt.Font("Comic Sans MS", 1, 18)); // NOI18N
@@ -789,56 +826,94 @@ public class CrawlPanel extends JPanel
         setDateBtn.setFont(new java.awt.Font("Comic Sans MS", 0, 12)); // NOI18N
         setDateBtn.setText("Set Date");
 
+        jLabel12.setText("Party Food:");
+
+        jLabel13.setText("Party Water:");
+
+        distFoodBtn.setText("Distribute Evenly");
+        distFoodBtn.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                distFoodBtnActionPerformed(evt);
+            }
+        });
+
+        distWaterBtn.setText("Distribute Evenly");
+        distWaterBtn.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                distWaterBtnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                            .addContainerGap()
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel4)
+                                        .addComponent(jLabel3))
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(windLbl, javax.swing.GroupLayout.DEFAULT_SIZE, 176, Short.MAX_VALUE)
+                                        .addComponent(rainLbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(weatherRollBtn)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(collectBtn))
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(jLabel6)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(eatBtn)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(drinkBtn)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(eatDrinkbtn)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(removePlyrBtn))
+                                .addComponent(jLabel1)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(jLabel2)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(tempLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(collectCheck))
+                                .addComponent(jLabel5)
+                                .addComponent(addPlyrBtn)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(jLabel7)
+                                    .addGap(40, 40, 40)
+                                    .addComponent(allEatBtn)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(allDrinkBtn)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(allEatDrinkBtn))))
+                        .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 448, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 442, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel4)
-                                    .addComponent(jLabel3))
+                                .addComponent(jLabel12)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(windLbl, javax.swing.GroupLayout.DEFAULT_SIZE, 176, Short.MAX_VALUE)
-                                    .addComponent(rainLbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(weatherRollBtn)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(collectBtn))
+                                .addComponent(partyFoodBox))
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel6)
+                                .addComponent(jLabel13)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(eatBtn)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(drinkBtn)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(eatDrinkbtn)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(removePlyrBtn))
-                            .addComponent(jLabel1)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(tempLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(collectCheck))
-                            .addComponent(jLabel5)
-                            .addComponent(addPlyrBtn)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel7)
-                                .addGap(40, 40, 40)
-                                .addComponent(allEatBtn)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(allDrinkBtn)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(allEatDrinkBtn))))
-                    .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 448, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 442, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(partyWaterBox)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(distFoodBtn, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(distWaterBtn, javax.swing.GroupLayout.Alignment.TRAILING))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -969,7 +1044,17 @@ public class CrawlPanel extends JPanel
                             .addComponent(allDrinkBtn)
                             .addComponent(allEatDrinkBtn))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 236, Short.MAX_VALUE)))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel13)
+                            .addComponent(partyWaterBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(distWaterBtn))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel12)
+                            .addComponent(partyFoodBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(distFoodBtn))))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -1083,6 +1168,16 @@ public class CrawlPanel extends JPanel
     {//GEN-HEADEREND:event_nextMonthBtnActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_nextMonthBtnActionPerformed
+
+    private void distWaterBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_distWaterBtnActionPerformed
+    {//GEN-HEADEREND:event_distWaterBtnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_distWaterBtnActionPerformed
+
+    private void distFoodBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_distFoodBtnActionPerformed
+    {//GEN-HEADEREND:event_distFoodBtnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_distFoodBtnActionPerformed
 */
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -1094,12 +1189,16 @@ public class CrawlPanel extends JPanel
     private javax.swing.JCheckBox canoeCheck;
     private javax.swing.JButton collectBtn;
     private javax.swing.JCheckBox collectCheck;
+    private javax.swing.JToggleButton distFoodBtn;
+    private javax.swing.JToggleButton distWaterBtn;
     private javax.swing.JButton drinkBtn;
     private javax.swing.JButton eatBtn;
     private javax.swing.JButton eatDrinkbtn;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -1119,6 +1218,8 @@ public class CrawlPanel extends JPanel
     private javax.swing.JButton nextYearBtn;
     private javax.swing.JComboBox<String> paceBox;
     private javax.swing.JLabel paceLbl;
+    private javax.swing.JTextField partyFoodBox;
+    private javax.swing.JTextField partyWaterBox;
     private javax.swing.JTable plyrTable;
     private javax.swing.JButton prevMonthBtn;
     private javax.swing.JButton prevYearBtn;

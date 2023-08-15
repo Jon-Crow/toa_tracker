@@ -14,7 +14,6 @@ import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.UIManager;
-import net.sourceforge.napkinlaf.NapkinLookAndFeel;
 
 public class ToATracker
 {
@@ -26,6 +25,7 @@ public class ToATracker
     
     public static void main(String[] args)
     {
+        /*
         try
         {
             NapkinLookAndFeel laf = new NapkinLookAndFeel();
@@ -35,7 +35,7 @@ public class ToATracker
         {
             LOGGER.log(Level.SEVERE, "Failed to set look and feel.", ex);
         }
-        
+        */
         state = loadGameState(SAVE_FILE);
         /*
         for(int i = 0; i < 5; i++)
@@ -50,11 +50,13 @@ public class ToATracker
             state.addPlayer(plyr);
         }
         */
+        /*
         Calendar cal = state.getCalendar();
         for(int i = 0; i < 10; i++)
         {
             cal.addEvent("Event " + (i+1), "", new Date(1500, Month.KYTHORN, 0), new Date(1500, Month.KYTHORN, i));
         }
+        */
         
         JFrame frame = new JFrame("ToA Tracker");
         frame.setContentPane(new JScrollPane(new CrawlPanel(state)));
